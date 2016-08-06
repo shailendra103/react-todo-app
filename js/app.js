@@ -24,7 +24,7 @@ var app = app || {};
                 //items: [],
                 todo: [],
                 inProgress: [],
-                Done: []
+                done: []
             };
         },
 
@@ -58,7 +58,7 @@ var app = app || {};
                 <div>Total : <span id="totalCount" class='totalCount'>0</span></div>
               </div>
 
-              <div className="left">To Do
+              <div className="columns left">To Do
                 <ul onDragOver={this.dragOver}>
                   {this.state.todo.map(function(item) {
                     return (
@@ -75,8 +75,40 @@ var app = app || {};
                   }, this)}
                 </ul>
               </div>
-              <div className="left">In Progress</div>
-              <div className="left">Done</div>
+              <div className="columns left">In Progress
+                <ul onDragOver={this.dragOver}>
+                  {this.state.inProgress.map(function(item) {
+                    return (
+                      <li
+                        data-id={item.key}
+                        key={item.key}
+                        draggable="true"
+                        onDragEnd={this.dragEnd}
+                        onDragStart={this.dragStart}
+                      >inProgress
+                        {item.text}
+                      </li>
+                    )
+                  }, this)}
+                </ul>
+              </div>
+              <div className="columns left">Done
+                <ul onDragOver={this.dragOver}>
+                  {this.state.inProgress.map(function(item) {
+                    return (
+                      <li
+                        data-id={item.key}
+                        key={item.key}
+                        draggable="true"
+                        onDragEnd={this.dragEnd}
+                        onDragStart={this.dragStart}
+                      >
+                        {item.text}
+                      </li>
+                    )
+                  }, this)}
+                </ul>
+              </div>
             </div>
           );
         },

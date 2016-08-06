@@ -1,6 +1,6 @@
 body {
     padding: 50px;
-    background-color: #66CCFF;
+    background-color: #DCDCDC;
     font-family: sans-serif;
 }
 
@@ -41,5 +41,10 @@ body {
 
 .left {
     float: left;
-    width: 33%;
+    width: 28%;
+}
+
+.columns {
+  background-color: #808080;
+  margin: 30px;
 }
