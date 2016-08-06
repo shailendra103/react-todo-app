@@ -21,12 +21,15 @@ var app = app || {};
 
         getInitialState: function() {
             return {
-                items: []
+                //items: [],
+                todo: [],
+                inProgress: [],
+                Done: []
             };
         },
 
         addItem: function(e) {
-            var itemArray = this.state.items;
+            var itemArray = this.state.todo;
 
             itemArray.push({
                 text: this._inputElement.value,
@@ -34,7 +37,7 @@ var app = app || {};
             });
 
             this.setState({
-                items: itemArray
+                todo: itemArray
             });
 
             this._inputElement.value = "";
@@ -43,7 +46,6 @@ var app = app || {};
             e.preventDefault();
         },
         render: function() {
-       // var todoEntries = {this.state.items};
           return (
             <div className="todoListMain">
               <div className="header">
@@ -56,7 +58,7 @@ var app = app || {};
                 <div>Total : <span id="totalCount" class='totalCount'>0</span></div>
               </div>
               <ul onDragOver={this.dragOver}>
-                {this.state.items.map(function(item) {
+                {this.state.todo.map(function(item) {
                   return (
                     <li
                       data-id={item.key}
@@ -87,7 +89,7 @@ var app = app || {};
             this.dragged.parentNode.removeChild(placeholder);
 
             // Update state
-            var itemArray = this.state.items;
+            var itemArray = this.state.todo;
             var fromKey = this.dragged.dataset.id;
             var toKey = this.over.dataset.id;
             var from, to;
@@ -107,7 +109,7 @@ var app = app || {};
 
             if (from < to) to--;
             itemArray.splice(to, 0, itemArray.splice(from, 1)[0]);
-            this.setState({ items: itemArray });
+            this.setState({ todo: itemArray });
         },
         dragOver: function(e) {
             e.preventDefault();
