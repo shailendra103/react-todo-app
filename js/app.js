@@ -38,6 +38,7 @@ var app = app || {};
             });
 
             this._inputElement.value = "";
+            document.getElementById("totalCount").innerHTML = itemArray.length;
 
             e.preventDefault();
         },
@@ -52,7 +53,7 @@ var app = app || {};
                        placeholder="enter task">
                     </input>
                 </form>
-                <div>Total : 10</div>
+                <div>Total : <span id="totalCount" class='totalCount'>0</span></div>
               </div>
               <ul onDragOver={this.dragOver}>
                 {this.state.items.map(function(item) {
