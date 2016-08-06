@@ -57,21 +57,26 @@ var app = app || {};
                 </form>
                 <div>Total : <span id="totalCount" class='totalCount'>0</span></div>
               </div>
-              <ul onDragOver={this.dragOver}>
-                {this.state.todo.map(function(item) {
-                  return (
-                    <li
-                      data-id={item.key}
-                      key={item.key}
-                      draggable="true"
-                      onDragEnd={this.dragEnd}
-                      onDragStart={this.dragStart}
-                    >
-                      {item.text}
-                    </li>
-                  )
-                }, this)}
-              </ul>
+
+              <div className="left">To Do
+                <ul onDragOver={this.dragOver}>
+                  {this.state.todo.map(function(item) {
+                    return (
+                      <li
+                        data-id={item.key}
+                        key={item.key}
+                        draggable="true"
+                        onDragEnd={this.dragEnd}
+                        onDragStart={this.dragStart}
+                      >
+                        {item.text}
+                      </li>
+                    )
+                  }, this)}
+                </ul>
+              </div>
+              <div className="left">In Progress</div>
+              <div className="left">Done</div>
             </div>
           );
         },
