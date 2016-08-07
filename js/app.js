@@ -16,7 +16,7 @@ var app = app || {};
     app.COMPLETED_TODOS = 'completed';
     var TodoFooter = app.TodoFooter;
     var fromState;
-    var toState= 'inprogress';;
+    var toState;
 
 
     var TodoList = React.createClass({
@@ -26,7 +26,9 @@ var app = app || {};
             return {
                 todo: [],
                 inProgress: [],
-                done: []
+                done: [],
+                dragFrom: 'todo',
+                dragTo: 'todo'
             };
         },
 
@@ -49,9 +51,6 @@ var app = app || {};
         },
         addInProgressItem: function(fromObj) {
             var itemArray = this.state.inProgress;
-
-            // var fromObj = {text: 'kbc',
-            //   key:Date.now()}
 
             itemArray.push(fromObj);
 
@@ -83,7 +82,7 @@ var app = app || {};
               <div>
                   <div className="columns left column1">
                     <div className="taskColumns todo">
-                      To Do
+                      <span className='title'>To Do</span>
                       <div className="counterBox"><div id="todoCount" className='countText'>0</div><div>Projects</div></div>
                     </div>
                     <ul className="todo-column theList"  onDragOver={this.dragOver}>
@@ -104,7 +103,7 @@ var app = app || {};
                   </div>
                   <div className="columns left column2">
                     <div className="taskColumns inProgress">
-                      In Progress
+                      <span className='title'>In Progress</span>
                       <div className="counterBox"><div id="inProgressCount" className='countText'>0</div><div>Projects</div></div>
                     </div>
                     <ul className="inprogress-column theList" onDragOver={this.inProgressdragOver}>
@@ -125,7 +124,7 @@ var app = app || {};
                   </div>
                   <div className="columns left column3">
                     <div className="taskColumns done">
-                      Done
+                      <span className='title'>Done</span>
                       <div className="counterBox"><div id="doneCount" className='countText'>0</div><div>Projects</div></div>
                     </div>
                     <ul className="done-column theList"  >
@@ -167,6 +166,8 @@ var app = app || {};
             //console.log(e.target.parentNode);
             this.dragged.parentNode.removeChild(placeholder);
 //console.log(this.draggedTo);
+//this.state.dragTo = 'inprogress'
+console.log('drag to :'+this.state.dragTo );
             // Update state
             var itemArray = this.state.todo;
             var fromKey = this.dragged.dataset.id;
@@ -189,12 +190,12 @@ var app = app || {};
             console.log("to :" + to);
 console.log('tosatte: ' + toState)
             //Move to Inprogress
-            if(toState == 'inprogress') {
+            if(this.state.dragTo == 'inprogress') {
                 itemArray.splice(from,1);
                 var inProgressArray = this.state.inProgress;
                 this.addInProgressItem(fromObj);
                 this.setState({ inProgress: inProgressArray });
-             } else {
+             } else if (this.state.dragTo == this.state.dragFrom && this.state.dragTo=='todo'){
                 if (from < to) to--;
                 itemArray.splice(to, 0, itemArray.splice(from, 1)[0]);
                 this.setState({ todo: itemArray });
@@ -205,6 +206,8 @@ console.log('tosatte: ' + toState)
         },
         inProgressdragOver: function(e){
           console.log("inProgressdragOver");
+          //toState = 'inprogress';
+          this.state.dragTo = 'inprogress'
           e.preventDefault();
           this.dragged.style.display = "none";
           if(e.target.className == "placeholder") return;
@@ -225,8 +228,8 @@ console.log('tosatte: ' + toState)
 
         },
         dragEndInProgress: function(e) {
-          toState = 'inprogress';
           console.log("dragEndInProgress");
+          this.state.dragTo = 'inprogress'
           console.log(e.currentTarget);
             this.draggedTo = e.currentTarget;
             this.dragged.style.display = "block";
@@ -274,7 +277,6 @@ console.log('tosatte: ' + toState)
 
 
     /*Render in Dom */
-
     ReactDOM.render( < div >
         < TodoList / >
         < /div>,
