@@ -15,6 +15,8 @@ var app = app || {};
     app.ACTIVE_TODOS = 'active';
     app.COMPLETED_TODOS = 'completed';
     var TodoFooter = app.TodoFooter;
+    var fromState;
+    var toState= 'inprogress';;
 
 
     var TodoList = React.createClass({
@@ -43,15 +45,13 @@ var app = app || {};
             this._inputElement.value = "";
             this.updateCounts();
 
-
             e.preventDefault();
-            this.addInProgressItem();
         },
-        addInProgressItem: function() {
+        addInProgressItem: function(fromObj) {
             var itemArray = this.state.inProgress;
 
-            var fromObj = {text: 'kbc',
-              key:Date.now()}
+            // var fromObj = {text: 'kbc',
+            //   key:Date.now()}
 
             itemArray.push(fromObj);
 
@@ -59,7 +59,6 @@ var app = app || {};
                 inProgress: itemArray
             });
 
-            //this._inputElement.value = "";
             this.updateCounts();
             //document.getElementById("totalCount").innerHTML = itemArray.length;
 
@@ -70,13 +69,16 @@ var app = app || {};
           return (
             <div className="todoListMain">
               <div className="header">
-                <form onSubmit={this.addItem}>
-                  <label>add project</label>
+                <form onSubmit={this.addItem} className="projectForm">
+                  <label>add project   </label>
                     <input ref={(a) => this._inputElement = a}
-                       placeholder="enter task">
+                       placeholder="enter prject">
                     </input>
                 </form>
-                <div>Total : <span id="totalCount" class='totalCount'>0</span></div>
+                <div id="totalCountBox" className="counterBox">
+                  <div>Total</div>
+                  <div><div id="totalCount" className='countText'>0</div><div>Projects</div></div>
+                </div>
               </div>
               <div>
                   <div className="columns left column1">
@@ -149,6 +151,7 @@ var app = app || {};
           );
         },
         dragStart: function(e) {
+          console.log("dragStart");
             this.dragged = e.currentTarget;
             e.dataTransfer.effectAllowed = 'move';
 
@@ -157,12 +160,13 @@ var app = app || {};
             e.dataTransfer.setData("text/html", e.currentTarget);
         },
         dragEnd: function(e) {
+          console.log("dragEnd");
             this.draggedTo = e.currentTarget;
             this.dragged.style.display = "block";
-            console.log('after');
-            console.log(e.target.parentNode);
+
+            //console.log(e.target.parentNode);
             this.dragged.parentNode.removeChild(placeholder);
-console.log(this.draggedTo.parentNode);
+//console.log(this.draggedTo);
             // Update state
             var itemArray = this.state.todo;
             var fromKey = this.dragged.dataset.id;
@@ -181,47 +185,83 @@ console.log(this.draggedTo.parentNode);
                 }
             }
 
-            //Move to Inprogress
-            if(1){
-            // itemArray.splice(from,1);
-            // var inProgressArray = this.state.inProgress;
-            // this.addInProgressItem(fromObj);
-            //  //this.setState({ inProgress: inProgressArray });
-             }
             console.log("from :" + from);
             console.log("to :" + to);
+console.log('tosatte: ' + toState)
+            //Move to Inprogress
+            if(toState == 'inprogress') {
+                itemArray.splice(from,1);
+                var inProgressArray = this.state.inProgress;
+                this.addInProgressItem(fromObj);
+                this.setState({ inProgress: inProgressArray });
+             } else {
+                if (from < to) to--;
+                itemArray.splice(to, 0, itemArray.splice(from, 1)[0]);
+                this.setState({ todo: itemArray });
+             }
 
-            if (from < to) to--;
-            itemArray.splice(to, 0, itemArray.splice(from, 1)[0]);
-            this.setState({ todo: itemArray });
+
+
         },
         inProgressdragOver: function(e){
-          //console.log(e.target.parentNode.parentNode);
-          console.log(e.currentTarget)
-            // e.preventDefault();
-            // this.dragged.style.display = "none";
-            // if (e.target.className == "placeholder") return;
-            // this.over = e.target;
-            // e.target.parentNode.insertBefore(placeholder, e.target);
+          console.log("inProgressdragOver");
+          e.preventDefault();
+          this.dragged.style.display = "none";
+          if(e.target.className == "placeholder") return;
+          this.over = e.target;
+          // Inside the dragOver method
+          var relY = e.clientY - this.over.offsetTop;
+          var height = this.over.offsetHeight / 2;
+          var parent = e.target.parentNode;
+
+          if(relY > height) {
+            this.nodePlacement = "after";
+            parent.insertBefore(placeholder, e.target.nextElementSibling);
+          }
+          else if(relY < height) {
+            this.nodePlacement = "before"
+            parent.insertBefore(placeholder, e.target);
+          }
+
         },
         dragEndInProgress: function(e) {
+          toState = 'inprogress';
+          console.log("dragEndInProgress");
           console.log(e.currentTarget);
             this.draggedTo = e.currentTarget;
             this.dragged.style.display = "block";
-            console.log('dragEndInProgress');
             console.log(e.target.parentNode);
             this.dragged.parentNode.removeChild(placeholder);
-console.log(this.draggedTo.parentNode);
+
           }
         ,
         dragOver: function(e) {
           //console.log(e.target.parentNode.parentNode);
-          console.log(e.currentTarget)
-            e.preventDefault();
-            this.dragged.style.display = "none";
-            if (e.target.className == "placeholder") return;
-            this.over = e.target;
-            e.target.parentNode.insertBefore(placeholder, e.target);
+          //console.log(e.currentTarget)
+            //e.preventDefault();
+            //this.dragged.style.display = "none";
+            //if (e.target.className == "placeholder") return;
+            //this.over = e.target;
+            //e.target.parentNode.insertBefore(placeholder, e.target);
+
+            //new
+          e.preventDefault();
+          this.dragged.style.display = "none";
+          if(e.target.className == "placeholder") return;
+          this.over = e.target;
+          // Inside the dragOver method
+          var relY = e.clientY - this.over.offsetTop;
+          var height = this.over.offsetHeight / 2;
+          var parent = e.target.parentNode;
+
+          if(relY > height) {
+            this.nodePlacement = "after";
+            parent.insertBefore(placeholder, e.target.nextElementSibling);
+          }
+          else if(relY < height) {
+            this.nodePlacement = "before"
+            parent.insertBefore(placeholder, e.target);
+          }
         },
         updateCounts: function() {
           document.getElementById("totalCount").innerHTML = this.state.todo.length+this.state.inProgress.length+this.state.done.length;
