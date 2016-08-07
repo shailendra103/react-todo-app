@@ -40,7 +40,8 @@ var app = app || {};
             });
 
             this._inputElement.value = "";
-            document.getElementById("totalCount").innerHTML = itemArray.length;
+            this.updateCounts();
+
 
             e.preventDefault();
         },
@@ -54,7 +55,8 @@ var app = app || {};
             });
 
             //this._inputElement.value = "";
-            document.getElementById("totalCount").innerHTML = itemArray.length;
+            this.updateCounts();
+            //document.getElementById("totalCount").innerHTML = itemArray.length;
 
             //e.preventDefault();
         },
@@ -172,10 +174,12 @@ console.log(this.draggedTo.parentNode);
             }
 
             //Move to Inprogress
+            if(1){
+            itemArray.splice(from,1);
             var inProgressArray = this.state.inProgress;
-this.addInProgressItem(fromObj);
+            this.addInProgressItem(fromObj);
              //this.setState({ inProgress: inProgressArray });
-
+            }
             console.log("from :" + from);
             console.log("to :" + to);
 
@@ -191,6 +195,10 @@ this.addInProgressItem(fromObj);
             e.target.parentNode.insertBefore(placeholder, e.target);
         },
         updateCounts: function() {
+          document.getElementById("totalCount").innerHTML = this.state.todo.length+this.state.inProgress.length+this.state.done.length;
+          document.getElementById("todoCount").innerHTML = this.state.todo.length;
+          document.getElementById("inProgressCount").innerHTML = this.state.inProgress.length;
+          document.getElementById("doneCount").innerHTML = this.state.done.length;
 
         }
     });
