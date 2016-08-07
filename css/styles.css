@@ -38,7 +38,6 @@ body {
 .todoListMain .theList {
     list-style: none;
     padding-left: 0;
-    width: 255px;
 }
 
 .todoListMain .theList li {
