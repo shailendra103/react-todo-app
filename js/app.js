@@ -18,14 +18,14 @@ var app = app || {};
     var TodoList = React.createClass({
 
         getInitialState: function() {
-            var itemArray = [];
+            var dummyArray = [];
             var fromObj = {text:'dummy',key: Date.now()}
-            itemArray.push(fromObj);
+            dummyArray.push(fromObj);
 
             return {
                 todo: [],
-                inProgress: itemArray,
-                done: [],
+                inProgress: dummyArray,
+                done: dummyArray,
                 dragFrom: 'todo',
                 dragTo: 'todo'
             };
@@ -46,7 +46,6 @@ var app = app || {};
             this.updateCounts();
 
             e.preventDefault();
-             //this.addInProgressTest();
         },
         addInProgressItem: function(fromObj) {
             var itemArray = this.state.inProgress;
@@ -56,20 +55,15 @@ var app = app || {};
             });
 
             this.updateCounts();
-
-            //e.preventDefault();
         },
-        addInProgressTest: function() {
-            var itemArray = this.state.inProgress;
-             var fromObj = {text:'kbc',key: Date.now()}
+        addInDoneItem: function(fromObj) {
+            var itemArray = this.state.done;
             itemArray.push(fromObj);
             this.setState({
-                inProgress: itemArray
+                done: itemArray
             });
 
             this.updateCounts();
-
-            //e.preventDefault();
         },
         render: function() {
 
@@ -114,7 +108,7 @@ var app = app || {};
                       <span className='title'>In Progress</span>
                       <div className="counterBox"><div id="inProgressCount" className='countText'>0</div><div>Projects</div></div>
                     </div>
-                    <ul className="inprogress-column theList" onDragOver={this.inProgressdragOver}>
+                    <ul className="inprogress-column theList" onDragOver={this.dragOverInProgress}>
                       {this.state.inProgress.map(function(item) {
                         return (
                           <li
@@ -135,14 +129,14 @@ var app = app || {};
                       <span className='title'>Done</span>
                       <div className="counterBox"><div id="doneCount" className='countText'>0</div><div>Projects</div></div>
                     </div>
-                    <ul className="done-column theList"  >
+                    <ul className="done-column theList"  onDragOver={this.dragOverDone}>
                       {this.state.done.map(function(item) {
                         return (
                           <li
                             data-id={item.key}
                             key={item.key}
                             draggable="true"
-                            onDragEnd={this.dragEnd}
+                            onDragEnd={this.dragEndDone}
                             onDragStart={this.dragStart}
                           >
                             {item.text}
@@ -173,17 +167,12 @@ var app = app || {};
             this.dragged.style.display = "block";
             console.log('drag to :'+this.state.dragTo );
 
-            console.log(e.target.parentNode);
-            console.log(placeholder);
             try {
               this.dragged.parentNode.removeChild(placeholder);
             }
-          catch(i) {
-            console.log("Error Thrown: " + i);
-        }
-
-//console.log(this.draggedTo);
-//this.state.dragTo = 'inprogress'
+            catch(i) {
+              console.log("Error Thrown: " + i);
+            }
 
             // Update state
             var itemArray = this.state.todo;
@@ -216,16 +205,25 @@ var app = app || {};
                 var node =  document.getElementsByClassName("inprogress-column");
                 console.log(node);
                 node[0].removeChild(placeholder);
-             } else if (this.state.dragTo == this.state.dragFrom && this.state.dragTo=='todo'){
+             }
+             else if(this.state.dragTo == 'done') {
+                itemArray.splice(from,1);
+                var doneArray = this.state.done;
+                this.addInDoneItem(fromObj);
+                //this.setState({ inProgress: inProgressArray });
+                //remove the empty node
+                var node =  document.getElementsByClassName("done-column");
+                console.log(node);
+                node[0].removeChild(placeholder);
+             }
+             else if (this.state.dragTo == this.state.dragFrom && this.state.dragTo=='todo'){
                 if (from < to) to--;
                 itemArray.splice(to, 0, itemArray.splice(from, 1)[0]);
                 this.setState({ todo: itemArray });
              }
 
-
-
         },
-        inProgressdragOver: function(e){
+        dragOverInProgress: function(e){
           console.log("inProgressdragOver");
           this.state.dragTo = 'inprogress';
           e.preventDefault();
@@ -245,19 +243,42 @@ var app = app || {};
             this.nodePlacement = "before"
             parent.insertBefore(placeholder, e.target);
           }
-
         },
         dragEndInProgress: function(e) {
-          console.log("dragEndInProgress");
-          this.state.dragTo = 'inprogress'
-          console.log(e.currentTarget);
+            console.log("dragEndInProgress");
+            this.state.dragTo = 'inprogress'
             this.draggedTo = e.currentTarget;
             this.dragged.style.display = "block";
-            console.log(e.target.parentNode);
             this.dragged.parentNode.removeChild(placeholder);
+        },
+        dragOverDone: function(e){
+          console.log("dragOverDone");
+          this.state.dragTo = 'done';
+          e.preventDefault();
+          this.dragged.style.display = "none";
+          if(e.target.className == "placeholder") return;
+          this.over = e.target;
+          // Inside the dragOver method
+          var relY = e.clientY - this.over.offsetTop;
+          var height = this.over.offsetHeight / 2;
+          var parent = e.target.parentNode;
 
+          if(relY > height) {
+            this.nodePlacement = "after";
+            parent.insertBefore(placeholder, e.target.nextElementSibling);
           }
-        ,
+          else if(relY < height) {
+            this.nodePlacement = "before"
+            parent.insertBefore(placeholder, e.target);
+          }
+        },
+        dragEndDone: function(e) {
+            console.log("dragEndDone");
+            this.state.dragTo = 'done'
+            this.draggedTo = e.currentTarget;
+            this.dragged.style.display = "block";
+            this.dragged.parentNode.removeChild(placeholder);
+        },
         dragOver: function(e) {
           e.preventDefault();
           this.state.dragTo = 'todo';
