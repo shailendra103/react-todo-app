@@ -3,6 +3,9 @@ body {
     background-color: #DCDCDC;
     font-family: sans-serif;
 }
+// #container{
+//   height:500px;
+// }
 
 .todoListMain .header input {
     padding: 10px;
