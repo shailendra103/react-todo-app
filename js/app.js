@@ -21,7 +21,6 @@ var app = app || {};
 
         getInitialState: function() {
             return {
-                //items: [],
                 todo: [],
                 inProgress: [],
                 done: []
@@ -45,6 +44,20 @@ var app = app || {};
 
             e.preventDefault();
         },
+        addInProgressItem: function(fromObj) {
+            var itemArray = this.state.inProgress;
+
+            itemArray.push(fromObj);
+
+            this.setState({
+                inProgress: itemArray
+            });
+
+            //this._inputElement.value = "";
+            document.getElementById("totalCount").innerHTML = itemArray.length;
+
+            //e.preventDefault();
+        },
         render: function() {
           return (
             <div className="todoListMain">
@@ -58,8 +71,12 @@ var app = app || {};
                 <div>Total : <span id="totalCount" class='totalCount'>0</span></div>
               </div>
 
-              <div className="columns left">To Do
-                <ul onDragOver={this.dragOver}>
+              <div className="columns left">
+                <div className="taskColumns">
+                  To Do
+                  <div className="counterBox"><div id="todoCount" className='countText'>0</div><div>Projects</div></div>
+                </div>
+                <ul className="todo-column" onDragOver={this.dragOver}>
                   {this.state.todo.map(function(item) {
                     return (
                       <li
@@ -75,8 +92,12 @@ var app = app || {};
                   }, this)}
                 </ul>
               </div>
-              <div className="columns left">In Progress
-                <ul onDragOver={this.dragOver}>
+              <div className="columns left">
+                <div className="taskColumns">
+                  In Progress
+                  <div className="counterBox"><div id="inProgressCount" className='countText'>0</div><div>Projects</div></div>
+                </div>
+                <ul className="inprogress-column" onDragOver={this.dragOver}>
                   {this.state.inProgress.map(function(item) {
                     return (
                       <li
@@ -92,8 +113,12 @@ var app = app || {};
                   }, this)}
                 </ul>
               </div>
-              <div className="columns left">Done
-                <ul onDragOver={this.dragOver}>
+              <div className="columns left">
+                <div className="taskColumns">
+                  Done
+                  <div className="counterBox"><div id="doneCount" className='countText'>0</div><div>Projects</div></div>
+                </div>
+                <ul className="done-column" onDragOver={this.dragOver}>
                   {this.state.inProgress.map(function(item) {
                     return (
                       <li
@@ -122,24 +147,34 @@ var app = app || {};
         },
         dragEnd: function(e) {
 
+            this.draggedTo = e.currentTarget;
             this.dragged.style.display = "block";
+            console.log('after');
+            console.log(this.dragged.parentNode);
             this.dragged.parentNode.removeChild(placeholder);
-
+console.log(this.draggedTo.parentNode);
             // Update state
             var itemArray = this.state.todo;
             var fromKey = this.dragged.dataset.id;
             var toKey = this.over.dataset.id;
             var from, to;
+            var fromObj;
 
             for (var i in itemArray) {
                 if (itemArray[i].key == fromKey) {
                     from = i;
+                    fromObj = itemArray[i];
                 }
 
                 if (itemArray[i].key == toKey) {
                     to = i;
                 }
             }
+
+            //Move to Inprogress
+            var inProgressArray = this.state.inProgress;
+this.addInProgressItem(fromObj);
+             //this.setState({ inProgress: inProgressArray });
 
             console.log("from :" + from);
             console.log("to :" + to);
@@ -155,6 +190,9 @@ var app = app || {};
             this.over = e.target;
             e.target.parentNode.insertBefore(placeholder, e.target);
         },
+        updateCounts: function() {
+
+        }
     });
 
 

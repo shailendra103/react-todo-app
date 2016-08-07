@@ -45,6 +45,23 @@ body {
 }
 
 .columns {
-  background-color: #808080;
-  margin: 30px;
+    background-color: #808080;
+    margin: 30px;
+}
+
+.counterBox {
+    background-color: red;
+    float: right;
+    //margin:10px;
+    margin: 10px;
+}
+
+.taskColumns {
+    padding-top: 10px;
+    width: 100%;
+}
+
+.countText {
+    margin: auto;
+    width: 15%;
 }
