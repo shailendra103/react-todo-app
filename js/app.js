@@ -7,8 +7,8 @@ var app = app || {};
 
 (function() {
     'use strict';
-    var destination = document.querySelector("#container");
-    var placeholder = document.createElement("li");
+    var destination = document.querySelector("#container"),
+        placeholder = document.createElement("li");
     placeholder.className = "placeholder";
 
     var TodoList = React.createClass({
@@ -72,9 +72,9 @@ var app = app || {};
                        placeholder="enter prject">
                     </input>
                 </form>
-                <div id="totalCountBox" className="counterBox">
-                  <div>Total</div>
-                  <div><div id="totalCount" className='countText'>0</div><div>Projects</div></div>
+                <div id="totalCountBox" >
+                  <div className="totalBoxTitle">TOTAL</div>
+                  <div className="counterBox"><div id="totalCount" className='countText'>0</div><div>Projects</div></div>
                 </div>
               </div>
               <div>
@@ -161,13 +161,12 @@ var app = app || {};
           console.log("dragEnd");
             this.draggedTo = e.currentTarget;
             this.dragged.style.display = "block";
-            console.log('drag to :'+this.state.dragTo );
 
             try {
               this.dragged.parentNode.removeChild(placeholder);
             }
             catch(i) {
-              console.log("Error Thrown: " + i);
+              console.log("Error Thrown while removing node");
             }
 
             // Update state
@@ -208,7 +207,6 @@ var app = app || {};
                 this.setState({ inProgress: doneArray });
                 //remove the empty node
                 var node =  document.getElementsByClassName("done-column");
-                console.log(node);
                 node[0].removeChild(placeholder);
              }
              else if (this.state.dragTo == this.state.dragFrom && this.state.dragTo=='todo'){
