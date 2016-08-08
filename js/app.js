@@ -11,10 +11,6 @@ var app = app || {};
     var placeholder = document.createElement("li");
     placeholder.className = "placeholder";
 
-    var fromState;
-    var toState;
-
-
     var TodoList = React.createClass({
 
         getInitialState: function() {
@@ -25,7 +21,7 @@ var app = app || {};
             return {
                 todo: [],
                 inProgress: dummyArray,
-                done: dummyArray,
+                done: [],
                 dragFrom: 'todo',
                 dragTo: 'todo'
             };
@@ -203,14 +199,13 @@ var app = app || {};
                 this.setState({ inProgress: inProgressArray });
                 //remove the empty node
                 var node =  document.getElementsByClassName("inprogress-column");
-                console.log(node);
                 node[0].removeChild(placeholder);
              }
              else if(this.state.dragTo == 'done') {
                 itemArray.splice(from,1);
                 var doneArray = this.state.done;
                 this.addInDoneItem(fromObj);
-                //this.setState({ inProgress: inProgressArray });
+                this.setState({ inProgress: doneArray });
                 //remove the empty node
                 var node =  document.getElementsByClassName("done-column");
                 console.log(node);
@@ -249,7 +244,9 @@ var app = app || {};
             this.state.dragTo = 'inprogress'
             this.draggedTo = e.currentTarget;
             this.dragged.style.display = "block";
-            this.dragged.parentNode.removeChild(placeholder);
+            //this.dragged.parentNode.removeChild(placeholder);
+            var node =  document.getElementsByClassName("inprogress-column").parent();
+            node[0].removeChild(placeholder);
         },
         dragOverDone: function(e){
           console.log("dragOverDone");
